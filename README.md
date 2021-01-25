@@ -14,7 +14,7 @@ On Debian platforms you can install or upgrade to the latest version with apt-ge
 ```sh
 $ sudo apt-get install go-dep
 ```
-After run de comand in MAKEFILE
+After run command build in MAKEFILE
 ```sh
 $  make build
 ```
