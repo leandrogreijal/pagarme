@@ -14,7 +14,6 @@ func TestExecuteError500(t *testing.T) {
 	tb.Amount(2.0)
 	tb.Name("Leandro Greijal")
 	tb.Country("BR")
-	tb.TypeCustomer(INDIVIDUAL)
 	tb.PaymentMethod(BOLETO)
 	tb.Document("251.854.650-26")
 
@@ -43,7 +42,6 @@ func TestExecuteBoletoBasicAuth(t *testing.T) {
 	tb.Amount(2.0)
 	tb.Name("Leandro Greijal")
 	tb.Country("BR")
-	tb.TypeCustomer(INDIVIDUAL)
 	tb.PaymentMethod(BOLETO)
 	tb.Document("251.854.650-26")
 	transaction := tb.Build()
@@ -73,7 +71,6 @@ func TestTransactionMarshal(t *testing.T) {
 	tb.Amount(2.0)
 	tb.Name("Leandro Greijal")
 	tb.Country("BR")
-	tb.TypeCustomer(INDIVIDUAL)
 	tb.PaymentMethod(BOLETO)
 	tb.Document("251.854.650-26")
 
@@ -93,7 +90,6 @@ func TestTransactionBuild(t *testing.T) {
 	tb.Amount(2.0)
 	tb.Name("Leandro Greijal")
 	tb.Country("BR")
-	tb.TypeCustomer(INDIVIDUAL)
 	tb.PaymentMethod(BOLETO)
 	tb.Document("251.854.650-26")
 
@@ -103,7 +99,7 @@ func TestTransactionBuild(t *testing.T) {
 	expect.Amount = 200
 	expect.Customer.Name = "Leandro Greijal"
 	expect.Customer.Country = "BR"
-	expect.Customer.TypeCustomer = INDIVIDUAL.String()
+	expect.Customer.CustomerType = INDIVIDUAL.String()
 	expect.PaymentMethod = BOLETO.String()
 	expect.Customer.Documents = append(expect.Customer.Documents, document{Number: "25185465026", DocumentType: CPF.String()})
 
@@ -120,6 +116,7 @@ func TestCreateDocumentCPF(t *testing.T) {
 
 	assertTest := assert.New(t)
 	assertTest.Equal("cpf", transactionTest.Customer.Documents[0].DocumentType)
+	assertTest.Equal("individual", transactionTest.Customer.CustomerType)
 	assertTest.Equal("25185465026", transactionTest.Customer.Documents[0].Number)
 
 }
@@ -132,6 +129,7 @@ func TestCreateDocumentCNPJ(t *testing.T) {
 
 	assertTest := assert.New(t)
 	assertTest.Equal("cnpj", transactionTest.Customer.Documents[0].DocumentType)
+	assertTest.Equal("corporation", transactionTest.Customer.CustomerType)
 
 }
 
@@ -176,15 +174,6 @@ func TestName(t *testing.T) {
 
 	assertTest := assert.New(t)
 	assertTest.Equal("Name", transactionTest.Customer.Name)
-}
-
-func TestTypeCustomer(t *testing.T) {
-	tb := TransactionBuilder{}
-	tb.TypeCustomer(INDIVIDUAL)
-	transactionTest := tb.Build()
-
-	assertTest := assert.New(t)
-	assertTest.Equal(INDIVIDUAL.String(), transactionTest.Customer.TypeCustomer)
 }
 
 func TestPaymentMethod(t *testing.T) {

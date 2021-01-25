@@ -4,22 +4,22 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
-BINARY_NAME=leandroGreijal
+BINARY_NAME=pagarme
 BINARY_UNIX=$(BINARY_NAME)_unix
 BINARY_DIRECTORY=bin
 
-all: dep test build build-linux
+all:  make build test build build-linux
 dep:
 	$(DEPCMD) ensure
-build:
+build: dep test
 	$(GOBUILD) -o ${BINARY_DIRECTORY}/$(BINARY_NAME) -v
-build-linux:
+build-linux: dep test
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o ${BINARY_DIRECTORY}/$(BINARY_UNIX) -v
-test:
+test: clean
 	$(GOTEST) -v ./...
 clean:
 	$(GOCLEAN)
 	rm -f ${BINARY_DIRECTORY}/$(BINARY_NAME)
 	rm -f ${BINARY_DIRECTORY}/$(BINARY_UNIX)
-run: test build
+run: build
 	./${BINARY_DIRECTORY}/$(BINARY_NAME)

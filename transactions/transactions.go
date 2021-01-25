@@ -31,23 +31,23 @@ const API_KEY = "ak_test_qCS4GVwDKJhzbTn0Z3KIU4p4k79U17"
 
 const (
 	CREDIT_CARD PaymentMethod = iota
-	BOLETO      PaymentMethod = iota
+	BOLETO
 )
 
 const (
-	INDIVIDUAL  TypeCustomer = iota
-	CORPORATION TypeCustomer = iota
+	INDIVIDUAL TypeCustomer = iota
+	CORPORATION
 )
 
 const (
-	CPF  DocumentType = iota
-	CNPJ DocumentType = iota
+	CPF DocumentType = iota
+	CNPJ
 )
 
 const (
-	BODY       AuthenticationMethod = iota
-	PARAM      AuthenticationMethod = iota
-	BASIC_AUTH AuthenticationMethod = iota
+	BODY AuthenticationMethod = iota
+	PARAM
+	BASIC_AUTH
 )
 
 func (p PaymentMethod) String() string {
@@ -60,6 +60,15 @@ func (t TypeCustomer) String() string {
 
 func (d DocumentType) String() string {
 	return [...]string{"cpf", "cnpj"}[d]
+}
+
+func NewTypeCustomer(value string) TypeCustomer {
+
+	if strings.ToLower(value) == "corporation" {
+		return CORPORATION
+	}
+
+	return INDIVIDUAL
 }
 
 type publicKey struct {
@@ -129,7 +138,7 @@ type transaction struct {
 		ExternalId   string     `json:"number,omitempty"`
 		Name         string     `json:"name,omitempty"`
 		Country      string     `json:"country,omitempty"`
-		TypeCustomer string     `json:"type,omitempty"`
+		CustomerType string     `json:"type,omitempty"`
 		Documents    []document `json:"documents,omitempty"`
 	} `json:"customer,omitempty"`
 }
@@ -252,11 +261,6 @@ func (b *TransactionBuilder) PaymentMethod(value PaymentMethod) *TransactionBuil
 	return b
 }
 
-func (b *TransactionBuilder) TypeCustomer(value TypeCustomer) *TransactionBuilder {
-	b.transaction.Customer.TypeCustomer = value.String()
-	return b
-}
-
 func (b *TransactionBuilder) Name(value string) (*TransactionBuilder, error) {
 
 	if strings.TrimSpace(value) == "" {
@@ -289,6 +293,7 @@ func (b *TransactionBuilder) Document(value string) (*TransactionBuilder, error)
 		value = strings.Replace(value, "-", "", -1)
 		doc := document{DocumentType: CPF.String(), Number: value}
 		b.transaction.Customer.Documents = append(b.transaction.Customer.Documents, doc)
+		b.transaction.Customer.CustomerType = INDIVIDUAL.String()
 
 		return b, nil
 	}
@@ -301,6 +306,7 @@ func (b *TransactionBuilder) Document(value string) (*TransactionBuilder, error)
 
 		doc := document{DocumentType: CNPJ.String(), Number: value}
 		b.transaction.Customer.Documents = append(b.transaction.Customer.Documents, doc)
+		b.transaction.Customer.CustomerType = CORPORATION.String()
 
 		return b, nil
 	}
