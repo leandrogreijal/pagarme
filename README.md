@@ -3,7 +3,7 @@
 
 ### Installation
 
-Pagar.me requires [GoLang](https://golang.org/) and
+Pagar.me requires [GoLang](https://golang.org/) and golang/dep
 
 On MacOS you can install or upgrade to the latest released version with Homebrew:
 ```sh
